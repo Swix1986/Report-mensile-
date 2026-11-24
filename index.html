@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="it" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>TargetSales Pro</title>
+  <meta name="theme-color" content="#0a0e17" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --surface: #111827;
+      --surface-2: #1a2336;
+      --border: #263248;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --accent: #38bdf8;
+      --accent-2: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      padding: 0 0 88px 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(10, 14, 23, 0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 14px;
+    }
+    .topbar-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .brand {
+      font-weight: 800;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.14);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .btn {
+      min-height: 40px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--accent);
+      color: #06101a;
+      border-color: var(--accent);
+    }
+    .btn-success {
+      background: var(--accent-2);
+      color: #05160b;
+      border-color: var(--accent-2);
+    }
+    .btn-warn {
+      background: rgba(245, 158, 11, 0.16);
+      color: #fbbf24;
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border-color: rgba(239, 68, 68, 0.35);
+    }
+    .btn-sm {
+      min-height: 34px;
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    .container {
+      padding: 14px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .kpi-box {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px;
+    }
+    .kpi-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .kpi-val {
+      font-size: 18px;
+      font-weight: 800;
+      margin-top: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .progress-wrap {
+      height: 8px;
+      background: #0b111d;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 8px;
+      border: 1px solid var(--border);
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 0.25s ease;
+    }
+    .day-strip {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+    }
+    .day-chip {
+      flex: 0 0 auto;
+      min-width: 96px;
+      padding: 9px 11px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+    }
+    .day-chip.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent);
+    }
+    .day-chip .d-name { font-weight: 800; font-size: 13px; }
+    .day-chip .d-sub { font-size: 11px; color: var(--muted); }
+    .filter-strip {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+    }
+    .chip {
+      min-height: 36px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .chip.active {
+      background: var(--accent);
+      color: #06101a;
+      border-color: var(--accent);
+    }
+    input[type="text"], input[type="number"], select, textarea {
+      width: 100%;
+      min-height: 40px;
+      background: #0b111d;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      padding: 8px 10px;
+      font-size: 14px;
+    }
+    .client-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px;
+      margin-bottom: 10px;
+    }
+    .client-card.sold {
+      border-color: rgba(34, 197, 94, 0.45);
+      background: rgba(34, 197, 94, 0.05);
+    }
+    .client-card.no-ord {
+      opacity: 0.72;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+    .badge-a { background: rgba(56, 189, 248, 0.18); color: #7dd3fc; }
+    .badge-b { background: rgba(245, 158, 11, 0.18); color: #fcd34d; }
+    .badge-c { background: rgba(156, 163, 175, 0.18); color: #d1d5db; }
+    .badge-sold { background: rgba(34, 197, 94, 0.2); color: #86efac; }
+    .consigliato-box {
+      background: #0b111d;
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 9px 11px;
+      margin: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 30;
+      background: rgba(10, 14, 23, 0.98);
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 6px 4px 10px 4px;
+    }
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 6px 2px;
+      cursor: pointer;
+    }
+    .nav-btn.active { color: var(--accent); }
+    .nav-ico { font-size: 18px; line-height: 1; }
+    .list-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(38, 50, 72, 0.6);
+      gap: 8px;
+    }
+    .list-row:last-child { border-bottom: none; }
+    .toast {
+      position: fixed;
+      bottom: 84px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      color: #f8fafc;
+      border: 1px solid var(--accent);
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      z-index: 50;
+      display: none;
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 40;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      width: 100%;
+      max-width: 440px;
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-row">
+    <div class="brand">
+      <span>TargetSales Pro</span>
+      <span class="pill" id="activeProjectPill">Novembre 2026</span>
+    </div>
+    <div style="display:flex;gap:6px;">
+      <button class="btn btn-sm btn-primary" id="btnNewProject">+ Nuovo</button>
+      <button class="btn btn-sm" id="btnOpenTargets">Target</button>
+    </div>
+  </div>
+</header>
+
+<main class="container" id="appRoot"></main>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-tab="dashboard">
+    <span class="nav-ico">📊</span>
+    <span>Dashboard</span>
+  </button>
+  <button class="nav-btn" data-tab="visits">
+    <span class="nav-ico">🚚</span>
+    <span>Visite</span>
+  </button>
+  <button class="nav-btn" data-tab="fido">
+    <span class="nav-ico">💳</span>
+    <span>Fido 300€</span>
+  </button>
+  <button class="nav-btn" data-tab="report">
+    <span class="nav-ico">📈</span>
+    <span>Report</span>
+  </button>
+</nav>
+
+<div class="toast" id="toastBox"></div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<script>
+const STORAGE_KEY = "targetsales_pro_gh_v1";
+
+const DEFAULT_HISTORY_NOV = [
+  { date: "2026-11-02", label: "Lun 2 Nov", type: "full", amount: 540 },
+  { date: "2026-11-03", label: "Mar 3 Nov", type: "full", amount: 510 },
+  { date: "2026-11-04", label: "Mer 4 Nov", type: "full", amount: 560 },
+  { date: "2026-11-05", label: "Gio 5 Nov", type: "full", amount: 310 },
+  { date: "2026-11-06", label: "Ven 6 Nov", type: "full", amount: 530 },
+  { date: "2026-11-07", label: "Sab 7 Nov (½)", type: "half", amount: 320 },
+  { date: "2026-11-09", label: "Lun 9 Nov", type: "full", amount: 520 },
+  { date: "2026-11-10", label: "Mar 10 Nov", type: "full", amount: 490 },
+  { date: "2026-11-11", label: "Mer 11 Nov", type: "full", amount: 550 },
+  { date: "2026-11-12", label: "Gio 12 Nov", type: "full", amount: 305 },
+  { date: "2026-11-13", label: "Ven 13 Nov", type: "full", amount: 540 },
+  { date: "2026-11-14", label: "Sab 14 Nov (½)", type: "half", amount: 335 },
+  { date: "2026-11-16", label: "Lun 16 Nov", type: "full", amount: 560 },
+  { date: "2026-11-17", label: "Mar 17 Nov", type: "full", amount: 515 },
+  { date: "2026-11-18", label: "Mer 18 Nov", type: "full", amount: 580 },
+  { date: "2026-11-19", label: "Gio 19 Nov", type: "full", amount: 315 },
+  { date: "2026-11-20", label: "Ven 20 Nov", type: "full", amount: 550 },
+  { date: "2026-11-21", label: "Sab 21 Nov (½)", type: "half", amount: 340 },
+  { date: "2026-11-23", label: "Lun 23 Nov", type: "full", amount: 580 },
+  { date: "2026-11-24", label: "Mar 24 Nov", type: "full", amount: 580 }
+]; // Sum = 9690
+
+const DEFAULT_DAYS = [
+  {
+    id: "2026-11-25",
+    label: "Mer 25 Nov",
+    shortLabel: "Mer 25",
+    mode: "strong", // strong full day
+    baseFloor: 0,
+    clients: [
+      { id: "c1", name: "Bar Centrale Casagiove", fascia: "A", min: 100, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c2", name: "Tabacchi Roma 14", fascia: "A", min: 100, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c3", name: "Market Santa Croce", fascia: "B", min: 50, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c4", name: "Caffetteria Corso", fascia: "B", min: 50, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c5", name: "Edicola Piazza", fascia: "C", min: 25, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c6", name: "Alimentari Casapulla", fascia: "C", min: 25, sale: 0, fidoUsed: 0, status: "pending" }
+    ],
+    outOfRoute: []
+  },
+  {
+    id: "2026-11-26",
+    label: "Gio 26 Nov (~300€)",
+    shortLabel: "Gio 26",
+    mode: "floor300", // ~300 EUR day
+    baseFloor: 300,
+    clients: [
+      { id: "c7", name: "Bar Sporting", fascia: "B", min: 50, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c8", name: "Tabacchi Stazione", fascia: "B", min: 50, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c9", name: "Minimarket Nord", fascia: "C", min: 25, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c10", name: "Bar Gelateria Sud", fascia: "C", min: 25, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c11", name: "Panificio Moderno", fascia: "C", min: 25, sale: 0, fidoUsed: 0, status: "pending" }
+    ],
+    outOfRoute: []
+  },
+  {
+    id: "2026-11-27",
+    label: "Ven 27 Nov",
+    shortLabel: "Ven 27",
+    mode: "strong",
+    baseFloor: 0,
+    clients: [
+      { id: "c12", name: "Supermarket Appia", fascia: "A", min: 100, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c13", name: "Tabacchi Galleria", fascia: "A", min: 100, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c14", name: "Bar Impero", fascia: "B", min: 50, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c15", name: "Pizzeria & Snack", fascia: "B", min: 50, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c16", name: "Mini Shop Centro", fascia: "C", min: 25, sale: 0, fidoUsed: 0, status: "pending" }
+    ],
+    outOfRoute: []
+  },
+  {
+    id: "2026-11-28",
+    label: "Sab 28 Nov (½ ~300€)",
+    shortLabel: "Sab 28 ½",
+    mode: "floor300",
+    baseFloor: 300,
+    clients: [
+      { id: "c17", name: "Bar Mattutino", fascia: "B", min: 50, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c18", name: "Tabacchi Sabato", fascia: "B", min: 50, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c19", name: "Alimentari Weekend", fascia: "C", min: 25, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c20", name: "Chiosco Parco", fascia: "C", min: 25, sale: 0, fidoUsed: 0, status: "pending" }
+    ],
+    outOfRoute: []
+  },
+  {
+    id: "2026-11-30",
+    label: "Lun 30 Nov (Chiusura)",
+    shortLabel: "Lun 30",
+    mode: "strong",
+    baseFloor: 0,
+    clients: [
+      { id: "c21", name: "Ingrosso & Dettaglio 1", fascia: "A", min: 100, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c22", name: "Bar Finale Mese", fascia: "A", min: 100, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c23", name: "Tabacchi Chiusura", fascia: "B", min: 50, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c24", name: "Market Fine Mese", fascia: "B", min: 50, sale: 0, fidoUsed: 0, status: "pending" },
+      { id: "c25", name: "Bottega Ultimo Giorno", fascia: "C", min: 25, sale: 0, fidoUsed: 0, status: "pending" }
+    ],
+    outOfRoute: []
+  }
+];
+
+function createDefaultState() {
+  return {
+    activeTab: "dashboard",
+    selectedDayId: "2026-11-25",
+    fasciaFilter: "ALL",
+    searchQuery: "",
+    activeProjectId: "proj-nov-2026",
+    projects: [
+      {
+        id: "proj-nov-2026",
+        name: "Novembre 2026",
+        targetA: 12900,
+        targetB: 13700,
+        fidoCap: 300,
+        priorFidoUsed: 0,
+        history: JSON.parse(JSON.stringify(DEFAULT_HISTORY_NOV)),
+        days: JSON.parse(JSON.stringify(DEFAULT_DAYS))
+      }
+    ]
+  };
+}
+
+let state = loadState();
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return createDefaultState();
+    const parsed = JSON.parse(raw);
+    if (!parsed.projects || !parsed.projects.length) return createDefaultState();
+    return Object.assign(createDefaultState(), parsed);
+  } catch (e) {
+    return createDefaultState();
+  }
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {}
+}
+
+function getProject() {
+  return state.projects.find(p => p.id === state.activeProjectId) || state.projects[0];
+}
+
+function fmtEur(num) {
+  const n = Number(num) || 0;
+  return "€ " + n.toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function showToast(msg) {
+  const box = document.getElementById("toastBox");
+  box.textContent = msg;
+  box.style.display = "block";
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => { box.style.display = "none"; }, 2400);
+}
+
+function fasciaWeight(f) {
+  if (f === "A") return 4;
+  if (f === "B") return 2;
+  return 1;
+}
+
+function getDaySales(day) {
+  const clientSum = (day.clients || []).reduce((acc, c) => acc + (Number(c.sale) || 0), 0);
+  const extraSum = (day.outOfRoute || []).reduce((acc, o) => acc + (Number(o.amount) || 0), 0);
+  return clientSum + extraSum;
+}
+
+function getTotals(proj) {
+  const historyTotal = (proj.history || []).reduce((acc, h) => acc + (Number(h.amount) || 0), 0);
+  const remainingSales = (proj.days || []).reduce((acc, d) => acc + getDaySales(d), 0);
+  const totalSales = historyTotal + remainingSales;
+
+  let activeFido = Number(proj.priorFidoUsed) || 0;
+  for (const d of (proj.days || [])) {
+    for (const c of (d.clients || [])) {
+      activeFido += Number(c.fidoUsed) || 0;
+    }
+  }
+  const fidoCap = Number(proj.fidoCap) || 300;
+  const fidoAvailable = Math.max(0, fidoCap - activeFido);
+
+  const gapA = Math.max(0, (Number(proj.targetA) || 12900) - totalSales);
+  const gapB = Math.max(0, (Number(proj.targetB) || 13700) - totalSales);
+
+  return {
+    historyTotal,
+    remainingSales,
+    totalSales,
+    activeFido,
+    fidoCap,
+    fidoAvailable,
+    gapA,
+    gapB
+  };
+}
+
+// Calcolo dinamico dei target giornalieri (Gio 26 e Sab 28 tarati ~300€, resto su Mer 25, Ven 27, Lun 30)
+function computeDailyTargets(proj) {
+  const totals = getTotals(proj);
+  const days = proj.days || [];
+
+  const floorDays = days.filter(d => d.mode === "floor300");
+  const strongDays = days.filter(d => d.mode !== "floor300");
+
+  // Target A
+  let reservedFloorA = 0;
+  const dayPlanA = {};
+  floorDays.forEach(d => {
+    const current = getDaySales(d);
+    const needed = Math.max(d.baseFloor || 300, current);
+    reservedFloorA += needed;
+    dayPlanA[d.id] = Math.max(0, needed - current);
+  });
+
+  const strongAlreadyDoneA = strongDays.reduce((acc, d) => acc + getDaySales(d), 0);
+  const totalNeededForA = Math.max(0, (Number(proj.targetA) || 12900) - totals.historyTotal);
+  const remainingForStrongA = Math.max(0, totalNeededForA - reservedFloorA - strongAlreadyDoneA);
+  const perStrongDayA = strongDays.length > 0 ? remainingForStrongA / strongDays.length : 0;
+
+  strongDays.forEach(d => {
+    const current = getDaySales(d);
+    dayPlanA[d.id] = Math.max(0, perStrongDayA);
+    if (current === 0) dayPlanA[d.id] = perStrongDayA;
+    else dayPlanA[d.id] = Math.max(0, perStrongDayA - current);
+  });
+
+  // Target B
+  let reservedFloorB = 0;
+  const dayPlanB = {};
+  floorDays.forEach(d => {
+    const current = getDaySales(d);
+    const needed = Math.max(d.baseFloor || 300, current);
+    reservedFloorB += needed;
+    dayPlanB[d.id] = Math.max(0, needed - current);
+  });
+
+  const strongAlreadyDoneB = strongDays.reduce((acc, d) => acc + getDaySales(d), 0);
+  const totalNeededForB = Math.max(0, (Number(proj.targetB) || 13700) - totals.historyTotal);
+  const remainingForStrongB = Math.max(0, totalNeededForB - reservedFloorB - strongAlreadyDoneB);
+  const perStrongDayB = strongDays.length > 0 ? remainingForStrongB / strongDays.length : 0;
+
+  strongDays.forEach(d => {
+    const current = getDaySales(d);
+    dayPlanB[d.id] = Math.max(0, perStrongDayB - current);
+  });
+
+  return {
+    perStrongDayA,
+    perStrongDayB,
+    dayPlanA,
+    dayPlanB
+  };
+}
+
+function getClientSuggested(day, client, proj) {
+  const plan = computeDailyTargets(proj);
+  const remA = plan.dayPlanA[day.id] || 0;
+  const remB = plan.dayPlanB[day.id] || 0;
+
+  const openClients = (day.clients || []).filter(c => c.status !== "sold" && c.status !== "no_order");
+  const baseMinSum = openClients.reduce((acc, c) => acc + (Number(c.min) || 0), 0);
+  const weightSum = openClients.reduce((acc, c) => acc + fasciaWeight(c.fascia), 0) || 1;
+  const w = fasciaWeight(client.fascia);
+  const minVal = Number(client.min) || 0;
+
+  if (client.status === "sold") {
+    return { suggA: Number(client.sale) || 0, suggB: Number(client.sale) || 0 };
+  }
+  if (client.status === "no_order") {
+    return { suggA: 0, suggB: 0 };
+  }
+
+  const extraGapA = Math.max(0, remA - baseMinSum);
+  const extraGapB = Math.max(0, remB - baseMinSum);
+
+  const suggA = minVal + (extraGapA * (w / weightSum));
+  const suggB = minVal + (extraGapB * (w / weightSum));
+
+  return {
+    suggA: Math.round(suggA * 100) / 100,
+    suggB: Math.round(suggB * 100) / 100
+  };
+}
+
+function render() {
+  const proj = getProject();
+  document.getElementById("activeProjectPill").textContent = proj.name;
+
+  document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.tab === state.activeTab);
+  });
+
+  const root = document.getElementById("appRoot");
+  if (state.activeTab === "dashboard") {
+    root.innerHTML = renderDashboard(proj);
+  } else if (state.activeTab === "visits") {
+    root.innerHTML = renderVisits(proj);
+  } else if (state.activeTab === "fido") {
+    root.innerHTML = renderFido(proj);
+  } else if (state.activeTab === "report") {
+    root.innerHTML = renderReport(proj);
+  }
+  saveState();
+}
+
+function renderDashboard(proj) {
+  const t = getTotals(proj);
+  const plan = computeDailyTargets(proj);
+  const pctA = Math.min(100, (t.totalSales / (proj.targetA || 12900)) * 100);
+  const pctB = Math.min(100, (t.totalSales / (proj.targetB || 13700)) * 100);
+  const fidoPct = Math.min(100, (t.activeFido / (t.fidoCap || 300)) * 100);
+
+  const historyRows = (proj.history || []).map((h, idx) => `
+    <div class="list-row">
+      <div>
+        <div style="font-weight:700;font-size:13px;">${h.label}</div>
+        <div style="font-size:11px;color:var(--muted);">${h.type === "half" ? "Mezza giornata" : "Giornata intera"}</div>
+      </div>
+      <div style="width:110px;">
+        <input type="number" step="0.01" class="hist-input" data-idx="${idx}" value="${Number(h.amount || 0)}" />
+      </div>
+    </div>
+  `).join("");
+
+  return `
+    <div class="card">
+      <div class="card-title">
+        <span>Fatturato Totale Maturato</span>
+        <span class="pill">Storico + Giro</span>
+      </div>
+      <div style="font-size:28px;font-weight:900;font-variant-numeric:tabular-nums;">${fmtEur(t.totalSales)}</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px;">
+        Storico 2–24 Nov: <b>${fmtEur(t.historyTotal)}</b> • Giro 25–30 Nov: <b>${fmtEur(t.remainingSales)}</b>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:12px;">
+      <div class="kpi-box">
+        <div class="kpi-label">TARGET A (Obbligatorio)</div>
+        <div class="kpi-val">${fmtEur(proj.targetA)}</div>
+        <div class="kpi-sub" style="color:${t.gapA === 0 ? "#86efac" : "#fca5a5"};">
+          Mancano: <b>${fmtEur(t.gapA)}</b>
+        </div>
+        <div class="progress-wrap"><div class="progress-bar" style="width:${pctA.toFixed(1)}%;"></div></div>
+        <div class="kpi-sub">${pctA.toFixed(1)}% raggiunto</div>
+      </div>
+
+      <div class="kpi-box">
+        <div class="kpi-label">TARGET B (Sfida)</div>
+        <div class="kpi-val">${fmtEur(proj.targetB)}</div>
+        <div class="kpi-sub" style="color:${t.gapB === 0 ? "#86efac" : "#fcd34d"};">
+          Mancano: <b>${fmtEur(t.gapB)}</b>
+        </div>
+        <div class="progress-wrap"><div class="progress-bar" style="width:${pctB.toFixed(1)}%;"></div></div>
+        <div class="kpi-sub">${pctB.toFixed(1)}% raggiunto</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span>Ritmo Giorni Forti (Mer 25, Ven 27, Lun 30)</span>
+        <span class="badge badge-a">Gio 26 & Sab 28 ~300€</span>
+      </div>
+      <div class="grid-2">
+        <div class="kpi-box">
+          <div class="kpi-label">Media / Giorno Forte (Target A)</div>
+          <div class="kpi-val" style="color:var(--accent);">${fmtEur(plan.perStrongDayA)}</div>
+          <div class="kpi-sub">Al netto di ~€ 300 Gio & ~€ 300 Sab</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-label">Media / Giorno Forte (Target B)</div>
+          <div class="kpi-val" style="color:#fbbf24;">${fmtEur(plan.perStrongDayB)}</div>
+          <div class="kpi-sub">Per chiudere a ${fmtEur(proj.targetB)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span>Fido Mensile Rotativo (${fmtEur(t.fidoCap)})</span>
+        <button class="btn btn-sm" id="goFidoFromDash">Gestisci</button>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;">
+        <span>Impegnato: ${fmtEur(t.activeFido)}</span>
+        <span style="color:#86efac;">Disponibile: ${fmtEur(t.fidoAvailable)}</span>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" style="width:${fidoPct.toFixed(1)}%;"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span>Storico Giornaliero (Domeniche escluse, Sab ½)</span>
+        <span class="badge badge-b">${fmtEur(t.historyTotal)}</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">
+        Modifica qualsiasi giornata per aggiornare subito la base di partenza.
+      </div>
+      ${historyRows}
+    </div>
+  `;
+}
+
+function renderVisits(proj) {
+  const days = proj.days || [];
+  const day = days.find(d => d.id === state.selectedDayId) || days[0];
+  state.selectedDayId = day.id;
+
+  const plan = computeDailyTargets(proj);
+  const daySales = getDaySales(day);
+  const dayTargetA = plan.dayPlanA[day.id] || 0;
+  const dayTargetB = plan.dayPlanB[day.id] || 0;
+
+  const dayTabsHtml = days.map(d => {
+    const s = getDaySales(d);
+    return `
+      <button class="day-chip ${d.id === day.id ? "active" : ""}" data-select-day="${d.id}">
+        <div class="d-name">${d.shortLabel}</div>
+        <div class="d-sub">${fmtEur(s)}</div>
+      </button>
+    `;
+  }).join("");
+
+  const fascie = ["ALL", "A", "B", "C"];
+  const fasciaHtml = fascie.map(f => {
+    const lbl = f === "ALL" ? "Tutte" : f === "A" ? "Fascia A (€100)" : f === "B" ? "Fascia B (€50)" : "Fascia C (€25)";
+    return `<button class="chip ${state.fasciaFilter === f ? "active" : ""}" data-fascia="${f}">${lbl}</button>`;
+  }).join("");
+
+  const q = (state.searchQuery || "").trim().toLowerCase();
+  const filteredClients = (day.clients || []).filter(c => {
+    const matchF = state.fasciaFilter === "ALL" || c.fascia === state.fasciaFilter;
+    const matchQ = !q || c.name.toLowerCase().includes(q);
+    return matchF && matchQ;
+  });
+
+  const clientsHtml = filteredClients.map(c => {
+    const sugg = getClientSuggested(day, c, proj);
+    const badgeClass = c.fascia === "A" ? "badge-a" : c.fascia === "B" ? "badge-b" : "badge-c";
+    const cardClass = c.status === "sold" ? "sold" : c.status === "no_order" ? "no-ord" : "";
+    const statusBadge = c.status === "sold"
+      ? `<span class="badge badge-sold">Venduto: ${fmtEur(c.sale)}</span>`
+      : c.status === "no_order"
+      ? `<span class="badge badge-c">No Ordine</span>`
+      : `<span class="badge badge-b">Da visitare</span>`;
+
+    return `
+      <div class="client-card ${cardClass}" data-client-id="${c.id}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+          <div>
+            <span class="badge ${badgeClass}">Fascia ${c.fascia}</span>
+            <strong style="font-size:15px;margin-left:4px;">${c.name}</strong>
+          </div>
+          ${statusBadge}
+        </div>
+
+        <div class="consigliato-box">
+          <div>
+            <div style="font-size:11px;color:var(--muted);">Consigliato da consegnare (Target A)</div>
+            <div style="font-size:16px;font-weight:900;color:var(--accent);">${fmtEur(sugg.suggA)}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:11px;color:var(--muted);">Proiezione Target B</div>
+            <div style="font-size:14px;font-weight:800;color:#fbbf24;">${fmtEur(sugg.suggB)}</div>
+          </div>
+        </div>
+
+        <div class="grid-3" style="margin-bottom:8px;">
+          <button class="btn btn-sm" data-preset="min" data-cid="${c.id}">Min ${fmtEur(c.min)}</button>
+          <button class="btn btn-sm btn-warn" data-preset="suggA" data-cid="${c.id}">Cons. A</button>
+          <button class="btn btn-sm btn-danger" data-preset="noor" data-cid="${c.id}">No Ord.</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;margin-bottom:8px;">
+          <input type="number" step="0.01" class="client-sale-input" data-cid="${c.id}" value="${Number(c.sale || 0)}" placeholder="Importo €" />
+          <button class="btn btn-sm btn-success" data-sell-client="${c.id}">Vendi</button>
+          ${c.status !== "pending" ? `<button class="btn btn-sm" data-reset-client="${c.id}">Annulla</button>` : ""}
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);">
+          <span>Fido cliente: <b>${fmtEur(c.fidoUsed || 0)}</b></span>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-sm" data-fido-add="25" data-cid="${c.id}">+25€ Fido</button>
+            <button class="btn btn-sm" data-fido-add="50" data-cid="${c.id}">+50€ Fido</button>
+            ${(c.fidoUsed || 0) > 0 ? `<button class="btn btn-sm btn-danger" data-fido-clear="${c.id}">Salda Fido</button>` : ""}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  const extraHtml = (day.outOfRoute || []).map((o, idx) => `
+    <div class="list-row">
+      <div>
+        <div style="font-weight:700;font-size:14px;">${o.name}</div>
+        <div style="font-size:11px;color:var(--muted);">Fuori giro fatturato oggi</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <b style="color:#86efac;">${fmtEur(o.amount)}</b>
+        <button class="btn btn-sm btn-danger" data-del-extra="${idx}">✕</button>
+      </div>
+    </div>
+  `).join("");
+
+  return `
+    <div class="day-strip">${dayTabsHtml}</div>
+
+    <div class="card">
+      <div class="card-title">
+        <span>${day.label}</span>
+        <span class="badge badge-a">Fatturato oggi: ${fmtEur(daySales)}</span>
+      </div>
+      <div class="grid-2">
+        <div class="kpi-box">
+          <div class="kpi-label">Residuo Giorno (Target A)</div>
+          <div class="kpi-val" style="color:var(--accent);">${fmtEur(dayTargetA)}</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-label">Residuo Giorno (Target B)</div>
+          <div class="kpi-val" style="color:#fbbf24;">${fmtEur(dayTargetB)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span>Fuori Giri di Giornata (Fattura Oggi)</span>
+        <button class="btn btn-sm btn-primary" id="btnAddExtra">+ Fuori Giro</button>
+      </div>
+      ${extraHtml || `<div style="font-size:12px;color:var(--muted);">Nessun fuori giro inserito per ${day.shortLabel}.</div>`}
+    </div>
+
+    <div style="margin-bottom:10px;">
+      <input type="text" id="searchClientInput" value="${state.searchQuery || ""}" placeholder="Cerca punto vendita..." />
+    </div>
+
+    <div class="filter-strip">${fasciaHtml}</div>
+
+    ${clientsHtml || `<div class="card"><div style="color:var(--muted);font-size:13px;">Nessun cliente corrisponde ai filtri selezionati.</div></div>`}
+  `;
+}
+
+function renderFido(proj) {
+  const t = getTotals(proj);
+  const pct = Math.min(100, (t.activeFido / (t.fidoCap || 300)) * 100);
+
+  const activeItems = [];
+  (proj.days || []).forEach(d => {
+    (d.clients || []).forEach(c => {
+      if ((Number(c.fidoUsed) || 0) > 0) {
+        activeItems.push({ day: d, client: c });
+      }
+    });
+  });
+
+  const rowsHtml = activeItems.map(({ day, client }) => `
+    <div class="list-row">
+      <div>
+        <div style="font-weight:700;">${client.name}</div>
+        <div style="font-size:12px;color:var(--muted);">${day.shortLabel} • Fascia ${client.fascia}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <b style="color:#fbbf24;">${fmtEur(client.fidoUsed)}</b>
+        <button class="btn btn-sm btn-success" data-fido-clear="${client.id}">Salda</button>
+      </div>
+    </div>
+  `).join("");
+
+  return `
+    <div class="card">
+      <div class="card-title">
+        <span>Plafond Fido Mensile (${fmtEur(t.fidoCap)})</span>
+        <span class="badge badge-b">Valido Tutto il Mese</span>
+      </div>
+      <div class="grid-3" style="margin-bottom:10px;">
+        <div class="kpi-box">
+          <div class="kpi-label">Plafond Mensile</div>
+          <div class="kpi-val">${fmtEur(t.fidoCap)}</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-label">Impegnato</div>
+          <div class="kpi-val" style="color:#fbbf24;">${fmtEur(t.activeFido)}</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-label">Disponibile</div>
+          <div class="kpi-val" style="color:#86efac;">${fmtEur(t.fidoAvailable)}</div>
+        </div>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" style="width:${pct.toFixed(1)}%;"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>Fido Pregresso (2–24 Nov)</span></div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">
+        Eventuale fido ancora aperto dai primi giorni del mese che riduce il plafond disponibile.
+      </div>
+      <input type="number" step="0.01" id="priorFidoInput" value="${Number(proj.priorFidoUsed || 0)}" />
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>Sospesi Attivi nel Giro (25–30 Nov)</span></div>
+      ${rowsHtml || `<div style="font-size:13px;color:var(--muted);">Nessun fido attivo sui clienti del giro.</div>`}
+    </div>
+  `;
+}
+
+function buildReportText(proj) {
+  const t = getTotals(proj);
+  const plan = computeDailyTargets(proj);
+  const lines = [
+    `*REPORT VENDITE - ${proj.name.toUpperCase()}*`,
+    `Fatturato Totale: *${fmtEur(t.totalSales)}*`,
+    `Storico 2-24 Nov: ${fmtEur(t.historyTotal)} | Giro 25-30 Nov: ${fmtEur(t.remainingSales)}`,
+    `Target A (${fmtEur(proj.targetA)}): manca *${fmtEur(t.gapA)}*`,
+    `Target B (${fmtEur(proj.targetB)}): manca *${fmtEur(t.gapB)}*`,
+    `Fido Mensile (${fmtEur(t.fidoCap)}): impegnato ${fmtEur(t.activeFido)} | disp. ${fmtEur(t.fidoAvailable)}`,
+    `Media Giorni Forti (Mer 25, Ven 27, Lun 30): A ${fmtEur(plan.perStrongDayA)} | B ${fmtEur(plan.perStrongDayB)}`,
+    `--- DETTAGLIO GIORNATE ---`
+  ];
+  (proj.days || []).forEach(d => {
+    const extraCount = (d.outOfRoute || []).length;
+    lines.push(`• ${d.shortLabel}: ${fmtEur(getDaySales(d))}${extraCount ? ` (${extraCount} fuori giro)` : ""}`);
+  });
+  return lines.join("
+");
+}
+
+function renderReport(proj) {
+  const t = getTotals(proj);
+  const plan = computeDailyTargets(proj);
+  const openClientsCount = (proj.days || []).reduce((acc, d) =>
+    acc + (d.clients || []).filter(c => c.status === "pending").length, 0
+  );
+  const avgPerOpenClientA = openClientsCount > 0 ? t.gapA / openClientsCount : 0;
+
+  return `
+    <div class="card">
+      <div class="card-title"><span>Condivisione & Esportazione</span></div>
+      <div class="grid-2">
+        <button class="btn btn-success" id="btnShareWa">Condividi Report WhatsApp</button>
+        <button class="btn btn-primary" id="btnExportSheets">Esporta Report in Formato Fogli</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>Strategie di Vendita & Upselling</span></div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">
+        Visite ancora aperte: <b>${openClientsCount}</b> • Gap medio per visita aperta (Target A): <b>${fmtEur(avgPerOpenClientA)}</b>
+      </div>
+      <div class="list-row">
+        <div>
+          <b>1. Upselling Fascia A (+€ 35 / +€ 50)</b>
+          <div style="font-size:12px;color:var(--muted);">Sui clienti A da € 100 proponi scorta extra su referenze ad alta rotazione per portarli a € 135–150.</div>
+        </div>
+      </div>
+      <div class="list-row">
+        <div>
+          <b>2. Soglia "+15€" su Fascia B (€ 50 → € 65)</b>
+          <div style="font-size:12px;color:var(--muted);">Aggiungi un formato complementare o busta multipack sui clienti B per compensare eventuali "No Ordine".</div>
+        </div>
+      </div>
+      <div class="list-row">
+        <div>
+          <b>3. Cross-Selling su Fascia C (€ 25 → € 35)</b>
+          <div style="font-size:12px;color:var(--muted);">Proponi un assortimento misto mirato sui clienti C per alzare lo scontrino medio senza appesantire l'ordine.</div>
+        </div>
+      </div>
+      <div class="list-row">
+        <div>
+          <b>4. Rotazione Fido Mensile (${fmtEur(t.fidoCap)})</b>
+          <div style="font-size:12px;color:var(--muted);">Usa quote mirate (€ 25–50) su ordini di spinta e incassa i sospesi aperti prima della chiusura del mese per liberare plafond.</div>
+        </div>
+      </div>
+      <div class="list-row">
+        <div>
+          <b>5. Fuori Giri Quotidiani & Giorni Forti</b>
+          <div style="font-size:12px;color:var(--muted);">Inserisci almeno 1 fuori giro al giorno e spingi su Mercoledì 25, Venerdì 27 e Lunedì 30 (media A: ${fmtEur(plan.perStrongDayA)}).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>Anteprima Testo Report</span></div>
+      <textarea rows="10" readonly>${buildReportText(proj)}</textarea>
+    </div>
+  `;
+}
+
+function exportSheetsCsv(proj) {
+  const rows = [
+    ["Progetto", "Data", "Giornata", "Tipo", "Cliente / Voce", "Fascia", "Stato", "Fatturato_EUR", "Fido_EUR"]
+  ];
+  (proj.history || []).forEach(h => {
+    rows.push([proj.name, h.date, h.label, "Storico", h.label, "-", "Consolidato", Number(h.amount || 0).toFixed(2), "0.00"]);
+  });
+  (proj.days || []).forEach(d => {
+    (d.clients || []).forEach(c => {
+      rows.push([proj.name, d.id, d.shortLabel, "Cliente", c.name, c.fascia, c.status, Number(c.sale || 0).toFixed(2), Number(c.fidoUsed || 0).toFixed(2)]);
+    });
+    (d.outOfRoute || []).forEach(o => {
+      rows.push([proj.name, d.id, d.shortLabel, "Fuori Giro", o.name, "EXTRA", "Venduto", Number(o.amount || 0).toFixed(2), "0.00"]);
+    });
+  });
+
+  const csvContent = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("
+");
+  const blob = new Blob(["﻿" + csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `TargetSales_${proj.name.replace(/\s+/g, "_")}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast("Report esportato in formato Fogli (.CSV)");
+}
+
+function openModal(html) {
+  const backdrop = document.getElementById("modalBackdrop");
+  const content = document.getElementById("modalContent");
+  content.innerHTML = html;
+  backdrop.style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("modalBackdrop").style.display = "none";
+}
+
+// Event Listeners
+document.querySelectorAll(".nav-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    state.activeTab = btn.dataset.tab;
+    render();
+  });
+});
+
+document.getElementById("modalBackdrop").addEventListener("click", (e) => {
+  if (e.target.id === "modalBackdrop") closeModal();
+});
+
+document.getElementById("btnNewProject").addEventListener("click", () => {
+  const proj = getProject();
+  openModal(`
+    <div class="card-title">
+      <span>Nuovo Progetto / Periodo</span>
+      <button class="btn btn-sm" id="closeModalBtn">✕</button>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label class="kpi-label">Nome Progetto</label>
+      <input type="text" id="newProjName" placeholder="Es. Dicembre 2026" />
+    </div>
+    <div class="grid-2" style="margin-bottom:10px;">
+      <div>
+        <label class="kpi-label">Target A (€)</label>
+        <input type="number" id="newProjTargetA" value="${proj.targetA}" />
+      </div>
+      <div>
+        <label class="kpi-label">Target B (€)</label>
+        <input type="number" id="newProjTargetB" value="${proj.targetB}" />
+      </div>
+    </div>
+    <div class="grid-2" style="margin-bottom:12px;">
+      <div>
+        <label class="kpi-label">Fatturato Base (€)</label>
+        <input type="number" id="newProjBase" value="0" />
+      </div>
+      <div>
+        <label class="kpi-label">Fido Mensile (€)</label>
+        <input type="number" id="newProjFido" value="300" />
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;" id="saveNewProjBtn">Crea Progetto</button>
+    ${state.projects.length > 1 ? `
+      <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:10px;">
+        <div class="kpi-label" style="margin-bottom:6px;">Cambia Progetto Esistente</div>
+        ${state.projects.map(p => `<button class="btn btn-sm" style="width:100%;margin-bottom:6px;" data-switch-proj="${p.id}">${p.name}</button>`).join("")}
+      </div>
+    ` : ""}
+  `);
+});
+
+document.getElementById("btnOpenTargets").addEventListener("click", () => {
+  const proj = getProject();
+  openModal(`
+    <div class="card-title">
+      <span>Modifica Target & Fido</span>
+      <button class="btn btn-sm" id="closeModalBtn">✕</button>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label class="kpi-label">Target A (€)</label>
+      <input type="number" id="editTargetA" value="${proj.targetA}" />
+    </div>
+    <div style="margin-bottom:10px;">
+      <label class="kpi-label">Target B (€)</label>
+      <input type="number" id="editTargetB" value="${proj.targetB}" />
+    </div>
+    <div style="margin-bottom:14px;">
+      <label class="kpi-label">Plafond Fido Mensile (€)</label>
+      <input type="number" id="editFidoCap" value="${proj.fidoCap || 300}" />
+    </div>
+    <button class="btn btn-success" style="width:100%;" id="saveTargetsBtn">Salva Target</button>
+  `);
+});
+
+document.getElementById("modalContent").addEventListener("click", (e) => {
+  if (e.target.id === "closeModalBtn") {
+    closeModal();
+  } else if (e.target.id === "saveTargetsBtn") {
+    const proj = getProject();
+    proj.targetA = Number(document.getElementById("editTargetA").value) || 12900;
+    proj.targetB = Number(document.getElementById("editTargetB").value) || 13700;
+    proj.fidoCap = Number(document.getElementById("editFidoCap").value) || 300;
+    closeModal();
+    render();
+    showToast("Target aggiornati");
+  } else if (e.target.id === "saveNewProjBtn") {
+    const nameInput = document.getElementById("newProjName").value.trim();
+    const name = nameInput || `Piano ${state.projects.length + 1}`;
+    const tA = Number(document.getElementById("newProjTargetA").value) || 12900;
+    const tB = Number(document.getElementById("newProjTargetB").value) || 13700;
+    const base = Number(document.getElementById("newProjBase").value) || 0;
+    const fido = Number(document.getElementById("newProjFido").value) || 300;
+
+    const newProj = {
+      id: "proj-" + Date.now(),
+      name,
+      targetA: tA,
+      targetB: tB,
+      fidoCap: fido,
+      priorFidoUsed: 0,
+      history: base > 0 ? [{ date: "base", label: "Fatturato Base Iniziale", type: "full", amount: base }] : [],
+      days: JSON.parse(JSON.stringify(DEFAULT_DAYS)).map(d => ({
+        ...d,
+        clients: d.clients.map(c => ({ ...c, sale: 0, fidoUsed: 0, status: "pending" })),
+        outOfRoute: []
+      }))
+    };
+    state.projects.push(newProj);
+    state.activeProjectId = newProj.id;
+    closeModal();
+    render();
+    showToast(`Progetto "${name}" creato`);
+  } else if (e.target.dataset.switchProj) {
+    state.activeProjectId = e.target.dataset.switchProj;
+    closeModal();
+    render();
+    showToast("Progetto cambiato");
+  } else if (e.target.id === "confirmExtraBtn") {
+    const name = document.getElementById("extraNameInput").value.trim() || "Fuori Giro";
+    const amt = Number(document.getElementById("extraAmountInput").value) || 0;
+    const proj = getProject();
+    const day = proj.days.find(d => d.id === state.selectedDayId) || proj.days[0];
+    if (amt > 0) {
+      day.outOfRoute.push({ name, amount: amt });
+      closeModal();
+      render();
+      showToast("Fuori giro aggiunto a oggi");
+    }
+  }
+});
+
+document.getElementById("appRoot").addEventListener("click", (e) => {
+  const proj = getProject();
+  const target = e.target.closest("button");
+  if (!target) return;
+
+  if (target.id === "goFidoFromDash") {
+    state.activeTab = "fido";
+    render();
+    return;
+  }
+
+  if (target.dataset.selectDay) {
+    state.selectedDayId = target.dataset.selectDay;
+    render();
+    return;
+  }
+
+  if (target.dataset.fascia) {
+    state.fasciaFilter = target.dataset.fascia;
+    render();
+    return;
+  }
+
+  if (target.id === "btnAddExtra") {
+    openModal(`
+      <div class="card-title">
+        <span>Nuovo Fuori Giro (Fattura Oggi)</span>
+        <button class="btn btn-sm" id="closeModalBtn">✕</button>
+      </div>
+      <div style="margin-bottom:10px;">
+        <label class="kpi-label">Cliente / Descrizione</label>
+        <input type="text" id="extraNameInput" placeholder="Es. Bar Extra / Ordine Flash" />
+      </div>
+      <div style="margin-bottom:14px;">
+        <label class="kpi-label">Importo Fatturato Oggi (€)</label>
+        <input type="number" step="0.01" id="extraAmountInput" placeholder="0.00" />
+      </div>
+      <button class="btn btn-success" style="width:100%;" id="confirmExtraBtn">Registra Fuori Giro</button>
+    `);
+    return;
+  }
+
+  if (target.dataset.delExtra !== undefined) {
+    const day = proj.days.find(d => d.id === state.selectedDayId) || proj.days[0];
+    const idx = Number(target.dataset.delExtra);
+    day.outOfRoute.splice(idx, 1);
+    render();
+    showToast("Fuori giro rimosso");
+    return;
+  }
+
+  const day = proj.days.find(d => d.id === state.selectedDayId) || proj.days[0];
+  const cid = target.dataset.cid || target.dataset.sellClient || target.dataset.resetClient || target.dataset.fidoClear;
+  const client = (day.clients || []).find(c => c.id === cid);
+
+  if (client && target.dataset.preset) {
+    const mode = target.dataset.preset;
+    const sugg = getClientSuggested(day, client, proj);
+    if (mode === "min") {
+      client.sale = Number(client.min) || 0;
+      client.status = "sold";
+    } else if (mode === "suggA") {
+      client.sale = sugg.suggA;
+      client.status = "sold";
+    } else if (mode === "noor") {
+      client.sale = 0;
+      client.status = "no_order";
+    }
+    render();
+    showToast("Aggiornato");
+    return;
+  }
+
+  if (client && target.dataset.sellClient) {
+    const card = target.closest(".client-card");
+    const input = card ? card.querySelector(".client-sale-input") : null;
+    const val = input ? Number(input.value) || 0 : Number(client.sale) || 0;
+    client.sale = val;
+    client.status = "sold";
+    render();
+    showToast(`Vendita segnata: ${fmtEur(val)}`);
+    return;
+  }
+
+  if (client && target.dataset.resetClient) {
+    client.status = "pending";
+    render();
+    showToast("Stato ripristinato");
+    return;
+  }
+
+  if (client && target.dataset.fidoAdd) {
+    const addAmt = Number(target.dataset.fidoAdd) || 0;
+    const t = getTotals(proj);
+    if (addAmt > t.fidoAvailable) {
+      showToast(`Fido disponibile insufficiente (${fmtEur(t.fidoAvailable)})`);
+      return;
+    }
+    client.fidoUsed = (Number(client.fidoUsed) || 0) + addAmt;
+    if ((Number(client.sale) || 0) < client.fidoUsed) {
+      client.sale = client.fidoUsed;
+      client.status = "sold";
+    }
+    render();
+    showToast(`Aggiunti ${fmtEur(addAmt)} di fido`);
+    return;
+  }
+
+  if (target.dataset.fidoClear) {
+    for (const d of (proj.days || [])) {
+      const found = (d.clients || []).find(c => c.id === target.dataset.fidoClear);
+      if (found) {
+        found.fidoUsed = 0;
+        break;
+      }
+    }
+    render();
+    showToast("Fido saldato");
+    return;
+  }
+
+  if (target.id === "btnShareWa") {
+    const text = buildReportText(proj);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(() => {});
+    }
+    const url = "https://wa.me/?text=" + encodeURIComponent(text);
+    window.open(url, "_blank");
+    showToast("Report pronto per WhatsApp");
+    return;
+  }
+
+  if (target.id === "btnExportSheets") {
+    exportSheetsCsv(proj);
+  }
+});
+
+document.getElementById("appRoot").addEventListener("input", (e) => {
+  const proj = getProject();
+  if (e.target.classList.contains("hist-input")) {
+    const idx = Number(e.target.dataset.idx);
+    if (proj.history[idx]) {
+      proj.history[idx].amount = Number(e.target.value) || 0;
+      saveState();
+    }
+  } else if (e.target.id === "searchClientInput") {
+    state.searchQuery = e.target.value;
+    saveState();
+  } else if (e.target.id === "priorFidoInput") {
+    proj.priorFidoUsed = Number(e.target.value) || 0;
+    saveState();
+  }
+});
+
+document.getElementById("appRoot").addEventListener("change", (e) => {
+  if (e.target.classList.contains("hist-input") || e.target.id === "priorFidoInput") {
+    render();
+  } else if (e.target.id === "searchClientInput") {
+    render();
+  }
+});
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+
+render();
+</script>
+</body>
+</html>
